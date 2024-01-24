@@ -1,25 +1,29 @@
 package main
 
 import (
-    "fyne.io/fyne/v2/app"
-    "log"
+	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/widget"
 )
 
 func main() {
-    myApp := app.New()
-    myWindow := myApp.NewWindow("Simple Rendering Engine")
+	myApp := app.New()
+	myWindow := myApp.NewWindow("Simple Rendering Engine")
 
-    url := "https://austinhenley.com/blog.html" // Replace with the URL you want to fetch
-    htmlContent, err := fetchHTML(url)
-    if err != nil {
-        log.Fatal(err)
-    }
+	// URL entry field
+	urlEntry := widget.NewEntry()
+	urlEntry.SetPlaceHolder("Enter URL...")
 
-    parsedContent, err := parseHTML(htmlContent)
-    if err != nil {
-        log.Fatal(err)
-    }
+	// Container for content
+	content := container.NewVBox()
 
-    // Call rendering function with parsed content
-    renderContent(parsedContent, myWindow)
+	// Button to fetch and render content
+	loadButton := widget.NewButton("Load", func() {
+		url := urlEntry.Text
+		renderContent(url, content)
+	})
+
+	// Add entry field and button to the window
+	myWindow.SetContent(container.NewVBox(urlEntry, loadButton, content))
+	myWindow.ShowAndRun()
 }
