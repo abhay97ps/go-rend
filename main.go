@@ -9,7 +9,7 @@ func main() {
     myApp := app.New()
     myWindow := myApp.NewWindow("Simple Rendering Engine")
 
-    url := "https://typecho.org/" // Replace with the URL you want to fetch
+    url := "https://austinhenley.com/blog.html" // Replace with the URL you want to fetch
     htmlContent, err := fetchHTML(url)
     if err != nil {
         log.Fatal(err)
