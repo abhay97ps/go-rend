@@ -1,13 +1,14 @@
 package main
 
 import (
-	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/canvas"
-	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/widget"
 	"image"
 	"image/color"
 	"net/http"
+
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/widget"
 )
 
 // Helper function to fetch and return an image from a URL
@@ -27,25 +28,24 @@ func fetchImage(url string) image.Image {
 }
 
 // renderContent displays text and images in a simple window
-func renderContent(parsedContent *ParsedContent) {
-	myApp := app.New()
-	myWindow := myApp.NewWindow("Simple Rendering Engine")
-
-	// Container to hold both text and images
+func renderContent(parsedContent *ParsedContent, window fyne.Window) {
 	content := container.NewVBox()
 
-	// Adding text content
-	textLabel := widget.NewLabel(parsedContent.Text)
-	content.Add(textLabel)
+	// Display text
+	text := widget.NewLabel(parsedContent.Text)
+	content.Add(text)
 
-	// Adding images
 	for _, imgUrl := range parsedContent.ImageUrls {
-		img := fetchImage(imgUrl)
-		imageWidget := canvas.NewImageFromImage(img)
-		imageWidget.FillMode = canvas.ImageFillContain // Adjust the fill mode as needed
+		imageWidget := canvas.NewImageFromImage(image.NewUniform(color.RGBA{0, 0, 0, 0})) // placeholder image
 		content.Add(imageWidget)
+
+		go func(url string, imgWidget *canvas.Image) {
+			img := fetchImage(url)
+			imgWidget.Image = img
+			imgWidget.Refresh() // Refresh the image widget to show the new image
+		}(imgUrl, imageWidget)
 	}
 
-	myWindow.SetContent(content)
-	myWindow.ShowAndRun()
+	window.SetContent(content)
+	window.ShowAndRun()
 }

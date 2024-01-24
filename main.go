@@ -1,25 +1,25 @@
 package main
 
 import (
-	"fmt"
-	"log"
+    "fyne.io/fyne/v2/app"
+    "log"
 )
 
 func main() {
-	url := "https://example.com/" // Replace with the URL you want to fetch
-	htmlContent, err := fetchHTML(url)
-	if err != nil {
-		log.Fatal(err)
-	}
+    myApp := app.New()
+    myWindow := myApp.NewWindow("Simple Rendering Engine")
 
-	parsedContent, err := parseHTML(htmlContent)
+    url := "https://typecho.org/" // Replace with the URL you want to fetch
+    htmlContent, err := fetchHTML(url)
     if err != nil {
         log.Fatal(err)
     }
 
-    fmt.Println("Text Content:", parsedContent.Text)
-    fmt.Println("Found image URLs:", parsedContent.ImageUrls)
+    parsedContent, err := parseHTML(htmlContent)
+    if err != nil {
+        log.Fatal(err)
+    }
 
     // Call rendering function with parsed content
-    renderContent(parsedContent)
+    renderContent(parsedContent, myWindow)
 }
