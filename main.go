@@ -2,45 +2,24 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	"net/http"
-	"strings"
-
-	"github.com/PuerkitoBio/goquery"
+	"log"
 )
 
-func parseAndPrintText(htmlContent string) {
-	doc, err := goquery.NewDocumentFromReader(strings.NewReader(htmlContent))
-	if err != nil {
-		panic(err)
-	}
-
-	doc.Find("body").Each(func(i int, s *goquery.Selection) {
-		text := s.Text()
-		fmt.Println(text)
-	})
-}
-
-func fetchHTML(url string) (string, error) {
-	resp, err := http.Get(url)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-
-	return string(body), nil
-}
-
 func main() {
-	url := "http://example.com" // Test URL
+	url := "https://example.com/" // Replace with the URL you want to fetch
 	htmlContent, err := fetchHTML(url)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-	// fmt.Println(htmlContent)
-	parseAndPrintText(htmlContent)
+
+	parsedContent, err := parseHTML(htmlContent)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    fmt.Println("Text Content:", parsedContent.Text)
+    fmt.Println("Found image URLs:", parsedContent.ImageUrls)
+
+    // Call rendering function with parsed content
+    renderContent(parsedContent)
 }
